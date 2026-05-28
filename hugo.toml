@@ -1,0 +1,41 @@
+baseURL = "https://aliendpoint.dev/"
+languageCode = "en-au"
+title = "aliendpoint.dev"
+theme = "PaperMod"
+paginate = 10
+
+[params]
+  author = "Ali Norouzi"
+  description = "Real-world guides for endpoint management, Intune, Azure, SOE and EUC. By Ali Norouzi, Brisbane."
+  homeInfoParams = {Title = "aliendpoint.dev", Content = "Real-world guides for Intune, Azure, SOE and endpoint management. No fluff — just what works in production."}
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowRssButtonInSectionTermList = true
+
+[params.profileMode]
+  enabled = false
+
+[[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/alirezanorouzi8385-code"
+
+[[params.socialIcons]]
+  name = "linkedin"
+  url = "https://linkedin.com/in/your-linkedin"
+
+[menu]
+  [[menu.main]]
+    name = "Blog"
+    url = "/posts/"
+    weight = 1
+  [[menu.main]]
+    name = "Scripts"
+    url = "/scripts/"
+    weight = 2
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 3
