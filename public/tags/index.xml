@@ -5,14 +5,49 @@
     <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on aliendpoint.dev</description>
     <generator>Hugo</generator>
-    <language>en-au</language>
-    <lastBuildDate>Thu, 28 May 2026 00:00:00 +0000</lastBuildDate>
+    <language>en-AU</language>
+    <lastBuildDate>Tue, 25 Aug 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Azure</title>
       <link>http://localhost:1313/tags/azure/</link>
-      <pubDate>Thu, 28 May 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/azure/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Entra</title>
+      <link>http://localhost:1313/tags/entra/</link>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/entra/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Gpo</title>
+      <link>http://localhost:1313/tags/gpo/</link>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/gpo/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Intune</title>
+      <link>http://localhost:1313/tags/intune/</link>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/intune/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Sspr</title>
+      <link>http://localhost:1313/tags/sspr/</link>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/sspr/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Windows</title>
+      <link>http://localhost:1313/tags/windows/</link>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/windows/</guid>
       <description></description>
     </item>
     <item>
@@ -20,13 +55,6 @@
       <link>http://localhost:1313/tags/euc/</link>
       <pubDate>Thu, 28 May 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/euc/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Intune</title>
-      <link>http://localhost:1313/tags/intune/</link>
-      <pubDate>Thu, 28 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/intune/</guid>
       <description></description>
     </item>
   </channel>

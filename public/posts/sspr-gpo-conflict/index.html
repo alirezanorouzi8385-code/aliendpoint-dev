@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>SSPR Not Showing on Windows Lock Screen — The GPO Conflict Nobody Checked | aliendpoint.dev</title>
+<meta name="keywords" content="intune, azure, entra, sspr, gpo, windows">
+<meta name="description" content="How a security hardening GPO silently blocked SSPR on the Windows lock screen for over a year — and how investigating the right Group Policy settings and their related registry keys finally solved it.">
+<meta name="author" content="Ali Norouzi">
+<link rel="canonical" href="http://localhost:1313/posts/sspr-gpo-conflict/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.89ca4972ab5e6aaa05e9a0dae0c4bb64b26585bc79e36f5cf33614eea0283abe.css" integrity="sha256-icpJcqteaqoF6aDa4MS7ZLJlhbx5429c8zYU7qAoOr4=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/sspr-gpo-conflict/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="aliendpoint.dev (Alt + H)">aliendpoint.dev</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/scripts/" title="Scripts">
+                    <span>Scripts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/posts/">Posts</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      SSPR Not Showing on Windows Lock Screen — The GPO Conflict Nobody Checked
+    </h1>
+    <div class="post-description">
+      How a security hardening GPO silently blocked SSPR on the Windows lock screen for over a year — and how investigating the right Group Policy settings and their related registry keys finally solved it.
+    </div>
+    <div class="post-meta">
+
+<span title='2026-08-25 00:00:00 +0000 UTC'>25 August 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>Ali Norouzi</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><h2 id="the-problem">The Problem<a hidden class="anchor" aria-hidden="true" href="#the-problem">#</a></h2>
+<p>Self-Service Password Reset (SSPR) was configured and working for most devices in the environment. However, on a specific set of Windows 10 workstations, the &ldquo;Reset password&rdquo; link was completely absent from the lock screen — even though the correct Intune/GPO configuration was in place. The issue lingered for over a year with Microsoft support unable to resolve it.</p>
+<p><img alt="SSPR missing from lock screen" loading="lazy" src="/images/sspr-post/sspr-missing.png">
+<em>Lock screen with SSPR missing — no &ldquo;Reset password&rdquo; link visible</em></p>
+<h2 id="eliminating-the-obvious">Eliminating the Obvious<a hidden class="anchor" aria-hidden="true" href="#eliminating-the-obvious">#</a></h2>
+<p>Before going deep, the usual suspects were ruled out:</p>
+<ul>
+<li><strong>Registry key</strong> — the primary SSPR registry key was present on both working and non-working devices, so this wasn&rsquo;t the cause</li>
+<li><strong>Azure AD Connect</strong> — ruled out because if password sync was broken, no users could reset passwords, not just some</li>
+<li><strong>OS build</strong> — all affected and unaffected devices were on the same Windows 10 build</li>
+<li><strong>User-related issue</strong> — SSPR failed to appear even before any user logged in, confirming this was a device-level problem</li>
+</ul>
+<h2 id="the-breakthrough">The Breakthrough<a hidden class="anchor" aria-hidden="true" href="#the-breakthrough">#</a></h2>
+<p>An affected device was moved to a clean OU with inheritance disabled. GPO-applied settings were removed via PowerShell, and the SSPR registry key was added manually. After reboot — SSPR appeared on the lock screen immediately.</p>
+<p><img alt="SSPR showing on lock screen" loading="lazy" src="/images/sspr-post/sspr-showing.png">
+<em>Lock screen with SSPR working — &ldquo;Reset password&rdquo; link visible</em></p>
+<p>Conclusion: something in the GPO stack was blocking it.</p>
+<h2 id="the-culprit--three-settings-inside-one-security-hardening-gpo">The Culprit — Three Settings Inside One Security Hardening GPO<a hidden class="anchor" aria-hidden="true" href="#the-culprit--three-settings-inside-one-security-hardening-gpo">#</a></h2>
+<p>Reviewing Microsoft documentation revealed several limitations for SSPR on the lock screen. Cross-referencing those against the environment GPO settings identified three specific settings inside a single security hardening GPO — each one setting a registry key that silently blocked SSPR.</p>
+<hr>
+<h3 id="setting-1--interactive-logon-dont-display-last-signed-in">Setting 1 — Interactive logon: Don&rsquo;t display last signed-in<a hidden class="anchor" aria-hidden="true" href="#setting-1--interactive-logon-dont-display-last-signed-in">#</a></h3>
+<p>This policy when set to <strong>Enabled</strong> prevents the last signed-in username from appearing on the lock screen — and as a side effect, blocks SSPR from rendering.</p>
+<p><strong>Registry key:</strong> HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\dontdisplaylastusername</p>
+<p><strong>Problematic value:</strong> 1</p>
+<p><img alt="Registry key dontdisplaylastusername" loading="lazy" src="/images/sspr-post/registry-key.png">
+<em>Registry Editor showing dontdisplaylastusername set to 1</em></p>
+<p><img alt="GPO setting Don&rsquo;t display last signed-in" loading="lazy" src="/images/sspr-post/gpo-setting.png">
+<em>Group Policy Management Editor — Interactive logon: Don&rsquo;t display last signed-in set to Enabled</em></p>
+<hr>
+<h3 id="setting-2--interactive-logon-do-not-require-ctrlaltdel">Setting 2 — Interactive logon: Do not require CTRL+ALT+DEL<a hidden class="anchor" aria-hidden="true" href="#setting-2--interactive-logon-do-not-require-ctrlaltdel">#</a></h3>
+<p>This policy when set to <strong>Disabled</strong> enforces the CTRL+ALT+DEL requirement before sign-in — which conflicts with the SSPR lock screen integration.</p>
+<p><strong>Registry key:</strong> HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD</p>
+<p><strong>Problematic value:</strong> 1</p>
+<p><img alt="Registry key DisableCAD" loading="lazy" src="/images/sspr-post/registry-key-3.png">
+<em>Registry Editor showing DisableCAD set to 1</em></p>
+<p><img alt="GPO setting CTRL+ALT+DEL" loading="lazy" src="/images/sspr-post/gpo-setting-2.png">
+<em>Group Policy Management Editor — Interactive logon: Do not require CTRL+ALT+DEL set to Disabled</em></p>
+<hr>
+<h3 id="setting-3--turn-off-app-notifications-on-lock-screen">Setting 3 — Turn off app notifications on lock screen<a hidden class="anchor" aria-hidden="true" href="#setting-3--turn-off-app-notifications-on-lock-screen">#</a></h3>
+<p>This policy when set to <strong>Disabled</strong> suppresses app notifications on the lock screen — which also suppresses the SSPR link from appearing.</p>
+<p><strong>Registry key:</strong> HKLM\Software\Policies\Microsoft\Windows\System\DisableLockScreenAppNotifications</p>
+<p><strong>Problematic value:</strong> 0</p>
+<p><img alt="Registry key DisableLockScreenAppNotifications" loading="lazy" src="/images/sspr-post/registry-key-2.png">
+<em>Registry Editor showing DisableLockScreenAppNotifications</em></p>
+<p><img alt="GPO setting Turn off app notifications" loading="lazy" src="/images/sspr-post/gpo-setting-3.png">
+<em>Group Policy Management Editor — Turn off app notifications on lock screen set to Disabled</em></p>
+<hr>
+<h2 id="the-fix">The Fix<a hidden class="anchor" aria-hidden="true" href="#the-fix">#</a></h2>
+<p>A new GPO with higher precedence was created containing only the three conflicting settings with the correct values. After applying to test devices, SSPR appeared on the lock screen with no issues. The fix was then rolled out to all affected devices.</p>
+<p>The two Security Options settings were corrected as follows:</p>
+<ul>
+<li><strong>Interactive logon: Don&rsquo;t display last signed-in</strong> set to <strong>Disabled</strong></li>
+<li><strong>Interactive logon: Do not require CTRL+ALT+DEL</strong> set to <strong>Enabled</strong></li>
+</ul>
+<p><img alt="GPO fix security options" loading="lazy" src="/images/sspr-post/gpo-fix-1.png">
+<em>Corrected Security Options settings in the new GPO</em></p>
+<p>The notification setting was corrected as follows:</p>
+<ul>
+<li><strong>Turn off app notifications on the lock screen</strong> set to <strong>Enabled</strong></li>
+</ul>
+<p><img alt="GPO fix notifications" loading="lazy" src="/images/sspr-post/gpo-fix-2.png">
+<em>Corrected app notifications setting in the new GPO</em></p>
+<h2 id="key-takeaway">Key Takeaway<a hidden class="anchor" aria-hidden="true" href="#key-takeaway">#</a></h2>
+<p>When SSPR isn&rsquo;t showing on the lock screen, the registry key everyone checks first is rarely the problem. Security hardening baselines silently block SSPR through settings that appear completely unrelated to password reset. Always cross-reference your hardening baseline against Microsoft&rsquo;s SSPR prerequisites.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/howto-sspr-windows">Self-service password reset for Windows devices - Microsoft Learn</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/intune/">Intune</a></li>
+      <li><a href="http://localhost:1313/tags/azure/">Azure</a></li>
+      <li><a href="http://localhost:1313/tags/entra/">Entra</a></li>
+      <li><a href="http://localhost:1313/tags/sspr/">Sspr</a></li>
+      <li><a href="http://localhost:1313/tags/gpo/">Gpo</a></li>
+      <li><a href="http://localhost:1313/tags/windows/">Windows</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/posts/welcome/">
+    <span class="title">Next »</span>
+    <span>Welcome to aliendpoint.dev</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">aliendpoint.dev</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
