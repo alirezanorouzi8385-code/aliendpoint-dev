@@ -15,12 +15,5 @@
       <guid>http://localhost:1313/posts/sspr-gpo-conflict/</guid>
       <description>How a security hardening GPO silently blocked SSPR on the Windows lock screen for over a year — and how investigating the right Group Policy settings and their related registry keys finally solved it.</description>
     </item>
-    <item>
-      <title>Welcome to aliendpoint.dev</title>
-      <link>http://localhost:1313/posts/welcome/</link>
-      <pubDate>Thu, 28 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/welcome/</guid>
-      <description>Why I started this site and what to expect.</description>
-    </item>
   </channel>
 </rss>
