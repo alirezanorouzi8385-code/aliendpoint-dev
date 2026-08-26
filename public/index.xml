@@ -20,7 +20,11 @@
       <link>http://localhost:1313/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/about/</guid>
-      <description>about</description>
+      <description>&lt;p&gt;Hi, I am Ali Norouzi — an IT pro based in Brisbane, Australia, specialising in endpoint management, Intune, Azure, SOE and EUC.&lt;/p&gt;
+&lt;p&gt;I created aliendpoint.dev to share real-world guides, scripts, and insights from day to day challenges on production environments.&lt;/p&gt;
+&lt;p&gt;I write about Microsoft Intune, Entra ID, Windows SOE, Autopilot, PowerShell, and modern workplace technology.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;The views and opinions expressed on this site are my own and do not reflect those of my employer or any organisation I am affiliated with. All content is provided as-is for informational purposes only. Any actions taken based on the information published here are done at your own risk.&lt;/em&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

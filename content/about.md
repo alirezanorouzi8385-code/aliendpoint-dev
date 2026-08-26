@@ -1,8 +1,6 @@
 ---
 title: "About"
-layout: "about"
 url: "/about/"
-summary: "about"
 ---
 
 Hi, I am Ali Norouzi — an IT pro based in Brisbane, Australia, specialising in endpoint management, Intune, Azure, SOE and EUC.
