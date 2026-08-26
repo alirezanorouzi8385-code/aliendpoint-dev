@@ -24,7 +24,7 @@ paginate = 10
 
 [[params.socialIcons]]
   name = "linkedin"
-  url = "https://linkedin.com/in/your-linkedin"
+  url = "https://www.linkedin.com/in/alnorouzi/"
 
 [menu]
   [[menu.main]]
