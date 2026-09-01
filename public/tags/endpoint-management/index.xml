@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Entra on aliendpoint.dev</title>
-    <link>http://localhost:1313/tags/entra/</link>
-    <description>Recent content in Entra on aliendpoint.dev</description>
+    <title>Endpoint-Management on aliendpoint.dev</title>
+    <link>http://localhost:1313/tags/endpoint-management/</link>
+    <description>Recent content in Endpoint-Management on aliendpoint.dev</description>
     <generator>Hugo</generator>
     <language>en-AU</language>
     <lastBuildDate>Tue, 01 Sep 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/entra/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/endpoint-management/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Unexpected Reboot During Autopilot ESP — Diagnosing and Fixing the Device Already Enrolled Error</title>
       <link>http://localhost:1313/posts/autopilot-device-already-enrolled/</link>
       <pubDate>Tue, 01 Sep 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/autopilot-device-already-enrolled/</guid>
       <description>An unexpected reboot mid-Autopilot provisioning was causing a misleading Device Already Enrolled error on re-enrollment. Here is what caused it and how it was fixed.</description>
-    </item>
-    <item>
-      <title>SSPR Not Showing on Windows Lock Screen — The GPO Conflict Nobody Checked</title>
-      <link>http://localhost:1313/posts/sspr-gpo-conflict/</link>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/sspr-gpo-conflict/</guid>
-      <description>How a security hardening GPO silently blocked SSPR on the Windows lock screen for over a year — and how investigating the right Group Policy settings and their related registry keys finally solved it.</description>
     </item>
   </channel>
 </rss>
