@@ -39,3 +39,6 @@ paginate = 10
     name = "About"
     url = "/about/"
     weight = 3
+[services]
+  [services.googleAnalytics]
+    ID = 'G-PCNLZK1XEF'
